@@ -69,7 +69,7 @@ class ApplicationController < Sinatra::Base
       phone: params[:phone],
       email: params[:email]
     )
-    student.to_json
+    student.to_json(include: { registrations: { include: :dance_class } })
   end
 
   #get all registrations
@@ -93,7 +93,7 @@ class ApplicationController < Sinatra::Base
       student_id: params[:student_id],
       dance_class_id: params[:dance_class_id]
     )
-    registration.to_json
+    registration.to_json(include: :dance_class)
   end
 
   #Update class by id
@@ -110,7 +110,14 @@ class ApplicationController < Sinatra::Base
       fee: fee,
       paid: paid
     )
-    registration.to_json
+    registration.to_json(include: :dance_class)
   end
+
+    #delete registration by id
+    delete '/registrations/:id' do
+      registration = Registration.find(params[:id])
+      registration.destroy
+      registration.to_json(include: :dance_class)
+    end
 
 end
